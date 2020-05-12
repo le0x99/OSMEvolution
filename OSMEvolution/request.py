@@ -1,3 +1,4 @@
+
 import osmapi
 import random
 import time
@@ -50,7 +51,7 @@ out skel qt;
 
 def collect_history(pois):
     histories = []
-    for poi in tqdm(pois):
+    for poi in tqdm(pois, desc="Collecting historic data"):
         sleeper = random.choice([.08,.2,.12,0,.25,.01,.33])
         hist = api.NodeHistory(NodeId=poi["id"])
         time.sleep(sleeper)
