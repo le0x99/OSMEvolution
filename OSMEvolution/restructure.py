@@ -2,15 +2,15 @@ import datetime
 import pickle
 from copy import deepcopy as copy
 import pandas as pd
-
+from tqdm import tqdm
 
 
 # Transform poi historic edits into global city entries 
 def get_entries(histories):
     data = list()
-    for poi_history in histories:
+    for poi_history in tqdm(histories):
         entries = list(poi_history.keys())
-        for entry in tqdm(poi_history):
+        for entry in poi_history:
             if entries.index(entry) != 0:
                 prev_key = entries[entries.index(entry) - 1]
                 prev_d = poi_history[prev_key]
