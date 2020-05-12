@@ -8,7 +8,7 @@ from tqdm import tqdm
 # Transform poi historic edits into global city entries 
 def get_entries(histories):
     data = list()
-    for poi_history in tqdm(histories):
+    for poi_history in tqdm(histories, desc="Extracting historic entries"):
         entries = list(poi_history.keys())
         for entry in poi_history:
             if entries.index(entry) != 0:
