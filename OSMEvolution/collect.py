@@ -3,7 +3,7 @@ from OSMEvolution.restructure import *
 import pickle
 import pandas as pd
 
-class OSMEvolution:
+class DataCollector:
     def __init__(self, city:str):
         self.city = city
         try:
