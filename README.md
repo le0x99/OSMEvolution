@@ -98,15 +98,15 @@ max     67.000000    5.000000  1690.000000  ...  127.000000   37.000000  1747.00
 >>> timeseries.plot(grid=True, title="weekly development", ylim=(0, 1000))
 ```
 
-![image.png](1.png)
+![image.png](1.PNG)
 
 ```python3
 
 # Object Evolution (created objects)
->>> timeseries.create.cumsum().plot(grid=True, title="Cumulative Object Creations")
+>>> timeseries.create.plot(grid=True, title="Created Objects per week");timeseries.create.cumsum().plot(grid=True, secondary_y=True);plt.ylabel("Cumulative")
 ```
 
-![image.png](2.png)
+![image.png](2.PNG)
 
 ```python3
 # Delta distribution for the two major variables, create and modify
