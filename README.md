@@ -103,7 +103,7 @@ max     67.000000    5.000000  1690.000000  ...  127.000000   37.000000  1747.00
 ```python3
 
 # Object Evolution (created objects)
->>> timeseries.create.plot(grid=True, title="Created Objects per week");timeseries.create.cumsum().plot(grid=True, secondary_y=True);plt.ylabel("Cumulative")
+>>> timeseries.create.plot(grid=True, title="Created Objects per month");timeseries.create.cumsum().plot(grid=True, secondary_y=True);plt.ylabel("Cumulative")
 ```
 
 ![image.png](2.PNG)
