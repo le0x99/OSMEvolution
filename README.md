@@ -95,7 +95,7 @@ max     67.000000    5.000000  1690.000000  ...  127.000000   37.000000  1747.00
 # Plotting, as usual using pandas.DataFrame methods.
 
 # Looking at all timeseries'
->>> timeseries.plot(grid=True, title="weekly development", ylim=(0, 1000))
+>>> timeseries.plot(grid=True, title="monthly development", ylim=(0, 1000))
 ```
 
 ![image.png](1.PNG)
