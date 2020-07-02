@@ -35,8 +35,14 @@ def to_entries(poi_history):
             try:
                 if any([prev_d["lat"] != d["lat"], prev_d["lon"] != d["lon"]]):
                     d["loc_change"] = 1
+                    
             except:
-                d["loc_change"] = None
+                try:
+                    if set(prev_d["nd"]) != set(d["nd"]):
+                        d["loc_change"] = 1
+                except:
+                    d["loc_change"] = 0
+
             #tag add
             for tag in d["tag"]:
                 if tag not in prev_d["tag"]:
