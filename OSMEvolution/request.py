@@ -43,7 +43,6 @@ out skel qt;
     #Modify attributes
     if init_otype == "node":
         for poi in elements:
-            del poi["type"]
             poi["location"] = (poi["lat"], poi["lon"])
             del poi["lat"]
             del poi["lon"]
@@ -55,7 +54,12 @@ def collect_history(pois):
     histories = []
     for poi in tqdm(pois, desc="Collecting historic data"):
         sleeper = random.choice([.08,.2,.12,0,.25,.01,.33])
-        hist = api.NodeHistory(NodeId=poi["id"])
+        if poi["type"].lower() == "node":
+            hist = api.NodeHistory(poi["id"])
+        elif poi["type"].lower() == "way":
+            hist = api.WayHistory(poi["id"])
+        elif poi["type"].lower() == "relation":
+            hist = api.RelationHistory(poi["id"])
         time.sleep(sleeper)
         histories.append(hist)
     return [ooi_hist for ooi_hist in histories if list(ooi_hist.keys())[0] == 1]
