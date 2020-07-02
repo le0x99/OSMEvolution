@@ -20,6 +20,7 @@ def get_area_id(city):
     return 3600000000 + osm_id
 
 def get_objects(area_id:int, ooi:str, properties:list, verbose=False):
+    init_otype = ooi
     for prop in properties:
         ooi += "[%s]" % prop
     overpass_url = "http://overpass-api.de/api/interpreter"
@@ -40,11 +41,12 @@ out skel qt;
     data = response.json()
     elements = data["elements"]
     #Modify attributes
-    for poi in elements:
-        del poi["type"]
-        poi["location"] = (poi["lat"], poi["lon"])
-        del poi["lat"]
-        del poi["lon"]
+    if init_otype == "node":
+        for poi in elements:
+            del poi["type"]
+            poi["location"] = (poi["lat"], poi["lon"])
+            del poi["lat"]
+            del poi["lon"]
     return elements
 
 
