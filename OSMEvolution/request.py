@@ -19,25 +19,38 @@ def get_area_id(city):
             break 
     return 3600000000 + osm_id
 
-def get_objects(area_id:int, ooi:str, properties:list, verbose=False):
+def get_objects(area_id:int, ooi:str, properties:list, verbose=False, return_all=True):
     init_otype = ooi
     for prop in properties:
         ooi += "[%s]" % prop
     overpass_url = "http://overpass-api.de/api/interpreter"
     #["addr:street"]["addr:housenumber"]
-    overpass_query = """
-[out:json][timeout:1000];
-area(%s)->.searchArea;
-(
-  %s(area.searchArea);
-);
-out body;
->;
-out skel qt;
-""" % (area_id, ooi)
+    if return_all:
+        overpass_query = """
+    [out:json][timeout:1000];
+    area(%s)->.searchArea;
+    (
+      %s(area.searchArea);
+    );
+    out body;
+    >;
+    out skel qt;
+    """ % (area_id, ooi)
+    else:
+        overpass_query = """
+    [out:json][timeout:1000];
+    area(%s)->.searchArea;
+    (
+      %s(area.searchArea);
+    );
+    out tags;
+    """ % (area_id, ooi)
+        
     if verbose:
         print(overpass_query)
     response = requests.get(overpass_url, params = {"data" : overpass_query})
+    if verbose:
+        print(response.status_code)
     data = response.json()
     elements = data["elements"]
     #Modify attributes
@@ -47,6 +60,7 @@ out skel qt;
             del poi["lat"]
             del poi["lon"]
     return elements
+
 
 
 
