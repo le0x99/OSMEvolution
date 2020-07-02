@@ -8,8 +8,9 @@ A package for receiving and restructuring OSM historic object data conveniently.
 
 ## Installation
 
+Currently under construction so install from source to avoid old bugs.
 ```bash
-$ pip install OSMEvolution
+$ pip install git+git://github.com/le0x99/OSMEvolution.git
 ```
 
 ## Usage
