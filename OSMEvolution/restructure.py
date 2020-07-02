@@ -75,7 +75,7 @@ def to_df(data, freq):
     df = pd.DataFrame(data)
     df["new_mapper"] = df.index.map(lambda i : 1 if df.uid[i] not in df.uid[:i].to_list() else 0)
     df.index = df.timestamp
-    del df.index.name
+
     df = df[['create', 'delete', 'modify', 'recreate', 'tag_add', 'tag_del', 'tag_change',
            'loc_change', "new_mapper"]]
         
