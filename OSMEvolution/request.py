@@ -43,7 +43,7 @@ def get_objects(area_id:int, ooi:str, properties:list, verbose=False, return_all
     (
       %s(area.searchArea);
     );
-    out tags;
+    out tags center;
     """ % (area_id, ooi)
         
     if verbose:
