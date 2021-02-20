@@ -1,56 +1,86 @@
+## - Data Collection - ##
 
-import osmapi
 import random
 import time
+import numpy as np
 import requests
 import datetime
-from tqdm import tqdm
 import pickle
-from copy import deepcopy as copy
-api = osmapi.OsmApi()
 import pandas as pd
+from copy import deepcopy as copy
+from tqdm import tqdm
+import osmapi
+api = osmapi.OsmApi()
 
-def get_area_id(city):
+#get_area_id is used to generate the ID needed for the overpass.
+#The official OSM IDs of the areas are not identical to the overpass area IDs, so this function generates the correct overpass ID.
+#This is possible because there is a mapping between the IDs, in this case 36000000+OSMID.
+
+def get_area_id(city:str) -> int:
     r = requests.get("https://nominatim.openstreetmap.org/search?q={}&format=json".format(city))
     data = r.json()
     for _ in data:
-        if all([ _["osm_type"] == "relation", _["class"] == "boundary", _["type"] == "administrative"]):
+        if all([ _["osm_type"] == "relation",
+                _["class"] == "boundary",
+                _["type"] == "administrative"]):
             osm_id = _["osm_id"]
             break 
     return 3600000000 + osm_id
 
-def get_objects(area_id:int, ooi:str, properties:list, verbose=False, return_all=True):
+#The get_objects function is used to find all currently existing objects for the given area, where the type and properties of the object must be defined.
+#The function (retrieve the current objects) is the only point of contact with the OverpassQueryLanguage.
+
+def get_objects(area_id:int,
+                ooi:str,
+                properties:list,
+                overpass_query:str=None,
+                verbose:bool=False,
+                return_center_location:bool=True) -> pd.DataFrame:
     init_otype = ooi
-    for prop in properties:
-        ooi += "[%s]" % prop
+    if properties != None:
+        if type(properties[0]) != list:
+            for prop in properties:
+                x = "[%s]" % prop
+                ooi += x
+            ooi = ooi + "(area.searchArea);"
+        else:
+            k = list()
+            for props in properties:
+                ooi_ = ooi
+                for prop in props:
+                    ooi_ += "[%s]" % prop
+                k.append(ooi_)
+            ooi = ""
+            for f in k:
+                f = f + "(area.searchArea);"
+                f = f + "\n" if not k.index(f.replace("(area.searchArea);", "")) == len(k)-1 else f
+                ooi += f
     overpass_url = "http://overpass-api.de/api/interpreter"
-    #["addr:street"]["addr:housenumber"]
-    if return_all:
-        overpass_query = """
-    [out:json][timeout:1000];
-    area(%s)->.searchArea;
-    (
-      %s(area.searchArea);
-    );
-    out body;
-    >;
-    out skel qt;
-    """ % (area_id, ooi)
-    else:
-        overpass_query = """
-    [out:json][timeout:1000];
-    area(%s)->.searchArea;
-    (
-      %s(area.searchArea);
-    );
-    out tags center;
-    """ % (area_id, ooi)
-        
+    if overpass_query == None:
+        if not return_center_location:
+            overpass_query = """
+        [out:json][timeout:1000];
+        area(%s)->.searchArea;
+        (
+          %s
+        );
+        out body;
+        >;
+        out skel qt;
+        """ % (area_id, ooi)
+        else:
+            overpass_query = """
+        [out:json][timeout:1000];
+        area(%s)->.searchArea;
+        (
+          %s
+        );
+        out tags center;
+        """ % (area_id, ooi)
+
     if verbose:
         print(overpass_query)
     response = requests.get(overpass_url, params = {"data" : overpass_query})
-    if verbose:
-        print(response.status_code)
     data = response.json()
     elements = data["elements"]
     #Modify attributes
@@ -59,12 +89,17 @@ def get_objects(area_id:int, ooi:str, properties:list, verbose=False, return_all
             poi["location"] = (poi["lat"], poi["lon"])
             del poi["lat"]
             del poi["lon"]
-    return elements
+    for poi in elements:
+        if "center" in poi:
+            poi["lat"] = poi["center"]["lat"]
+            poi["lon"] = poi["center"]["lon"]
+            del poi["center"]
+    return pd.DataFrame(elements)
 
-
-
-
-def collect_history(pois):
+#The function collect_history collects the historical entries of the objects.
+def collect_history(pois:pd.DataFrame) -> list:
+    if type(pois) == pd.DataFrame:
+        pois = pois.to_dict('records')
     histories = []
     for poi in tqdm(pois, desc="Collecting historic data"):
         sleeper = random.choice([.08,.2,.12,0,.25,.01,.33])
@@ -77,5 +112,3 @@ def collect_history(pois):
         time.sleep(sleeper)
         histories.append(hist)
     return [ooi_hist for ooi_hist in histories if list(ooi_hist.keys())[0] == 1]
-
-
