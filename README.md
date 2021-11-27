@@ -1,7 +1,6 @@
-# OSMEvolution V0.1 [UNDER CONSTRUCTION]  🌍 📈
+# OSMEvolution 0.1  🌍 📈
 
-[![Downloads](https://pepy.tech/badge/OSMEvolution/week)](https://pepy.tech/project/OSMEvolution/week)
-[![Downloads](https://pepy.tech/badge/OSMEvolution/month)](https://pepy.tech/project/OSMEvolution/month)
+[![Downloads](https://pepy.tech/badge/osmevolution)](https://pepy.tech/project/osmevolution)
 
 A package for receiving and restructuring OSM historic object data conveniently. Works for arbitrary OSM objects and all cities.
 
