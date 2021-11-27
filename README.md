@@ -12,6 +12,10 @@ Currently under construction so install from source to avoid old bugs.
 $ pip install git+git://github.com/le0x99/OSMEvolution.git
 ```
 
+## How it works
+
+![image.png](Bildschirmfoto 2021-11-27 um 20.55.43.png)
+
 ## Usage
 
 ```python3
