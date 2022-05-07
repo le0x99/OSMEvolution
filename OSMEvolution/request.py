@@ -96,7 +96,8 @@ def get_objects(area_id:int,
             del poi["center"]
     return pd.DataFrame(elements)
 
-#The function collect_history collects the historical entries of the objects.
+# The function collect_history collects the historical entries of the objects.
+
 def collect_history(pois:pd.DataFrame) -> list:
     if type(pois) == pd.DataFrame:
         pois = pois.to_dict('records')
