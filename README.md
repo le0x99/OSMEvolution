@@ -1,20 +1,16 @@
-# OSMEvolution 0.1  🌍 📈
+# OSMEvolution 1.0 (stable)  🌍 📈
 
 [![Downloads](https://pepy.tech/badge/osmevolution)](https://pepy.tech/project/osmevolution)
 
-A package for receiving and restructuring OSM historic object data conveniently. Works for arbitrary OSM objects and all cities.
+A package for receiving and restructuring OSM historic object time series data conveniently. Works for arbitrary OSM objects and all cities.
 
 
 ## Installation
 
-Currently under construction so install from source to avoid old bugs.
+Install directly from source 
 ```bash
-$ pip install git+git://github.com/le0x99/OSMEvolution.git
+$ python -m pip install git+https://github.com/le0x99/OSMEvolution
 ```
-
-## How it works
-
-![image.png](44.PNG)
 
 ## Usage
 
@@ -26,22 +22,24 @@ from OSMEvolution.collect import DataCollector
 >>> collector = DataCollector(city="Berlin")  
 ```
 
+
+#### Retrieve static data of the objects of interest (OOI).
+The object is defined by
+1. its object type (according to the OSM spatial data model).
+2. its object properties, i.e. "tags".
+      
+As an example, we request the data for restaurants in Berlin, whose "amenity"-key was valued as "restaurant".
+
 ```python3
-# Retrieve static data of the objects of interest (OOI).
-# The object is defined by
-      # 1. its object type (according to the OSM spatial data model).
-      # 2. its object properties.
-      
-      
-# As an example, we request the data for restaurants in Berlin, whose "amenity"-key was valued as "restaurant".
-# More granular queries can be done by adding properties to the properties list.
-
-
 >>> collector.get_objects(object_type="node", properties=["amenity=restaurant"])
+```
 
-# The descriptive (static) data of the objects of interest can now be accessed.
-# The static data is a pandas DataFrame object.
+- More granular queries can be done by adding properties to the properties list. For example, adding ```"cuisine=italian" ``` yields italian restaurants.
 
+The descriptive (static) data of the objects of interest can now be accessed.
+The static data is a pandas DataFrame object.
+
+```python3
 >>> static_data = collector.data.get("static").copy()
 >>> static_data.head()
 
@@ -51,21 +49,28 @@ from OSMEvolution.collect import DataCollector
 2  26735763  ...  (52.5073199, 13.3207804)
 3  29997724  ...  (52.5063184, 13.2846256)
 4  30020303  ...  (52.4907103, 13.3939814)
+```
 
+Now the historic data of the selected objects are requested, aggregated and restructured.
+To construct a proper time series, we need to specify the frequency of the series, here we choose monthly data.
+Note that we query OSM in a gentle way, making the queries slow but safe.
 
-# Now the historic data of the selected objects are requested, aggregated and restructured.
-# To construct a proper time series, we need to specify the frequency of the series, here we choose monthly data.
+```python3
 >>> collector.build_timeseries(frequency="m")     
 
 Collecting historic data: 100%|████████████| 4055/4055 [07:44<00:00,  5.30it/s]
 Extracting historic entries: 100%|█████████| 4010/4010 [00:14<00:00, 3931.60it/s]
+```
 
-# The historic data and all other data that was produced during restructuring can be accessed via 
+The historic data and all other data that was produced during restructuring can be accessed via
+
+```python3
 >>> collector.data.keys()
 
 dict_keys(['static_raw', 'static', 'raw_history', 'historic_entries', 'timeseries'])
-
-# Accessing the actual timeseries.
+```
+Accessing the actual timeseries.
+```python3
 >>> timeseries = collector.data.get("timeseries").copy()
 >>> timeseries
 
@@ -84,6 +89,11 @@ dict_keys(['static_raw', 'static', 'raw_history', 'historic_entries', 'timeserie
 
 [159 rows x 10 columns]
 
+```
+Obtaining summary statistics
+
+```python3
+
 >>> timeseries.describe()
 
            create      delete       modify  ...  loc_change  new_mapper     activity
@@ -96,24 +106,26 @@ min      0.000000    0.000000     0.000000  ...    0.000000    0.000000     0.00
 75%     32.500000    0.000000   156.500000  ...   34.500000   20.000000   184.000000
 max     67.000000    5.000000  1690.000000  ...  127.000000   37.000000  1747.000000
 
-# Plotting, as usual using pandas.DataFrame methods.
-
-# Looking at all timeseries'
+```
+Plotting, as usual using pandas.DataFrame methods.
+Looking at all timeseries'
+```python3
 >>> timeseries.plot(grid=True, title="monthly development", ylim=(0, 1000))
 ```
 
 ![image.png](1.PNG)
 
+Object Evolution (created objects)
 ```python3
 
-# Object Evolution (created objects)
 >>> timeseries.create.plot(grid=True, title="Created Objects per month");timeseries.create.cumsum().plot(grid=True, secondary_y=True);plt.ylabel("Cumulative")
 ```
 
 ![image.png](2.PNG)
 
+Delta distribution for the two major variables, create and modify
+
 ```python3
-# Delta distribution for the two major variables, create and modify
 >>> timeseries[["create", "modify"]].diff().hist(bins=15);plt.suptitle("Distribution of $\delta_t$")
 ```
 ![image.png](3.png)
@@ -133,6 +145,10 @@ from OSMEvolution.collect import DataCollector
 >>> collector.build_timeseries(frequency="m")
 
 ```
+
+## How it works
+
+![image.png](44.PNG)
 
 ## To Do and future work
 
