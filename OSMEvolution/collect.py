@@ -1,3 +1,5 @@
+###  CODE : OPERATIONAL ( * TESTS PASSED) ###
+
 from OSMEvolution.request import *
 from OSMEvolution.restructure import *
 import pickle
