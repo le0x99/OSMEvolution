@@ -118,7 +118,8 @@ Looking at all timeseries'
 Object Evolution (created objects)
 ```python3
 
->>> timeseries.create.plot(grid=True, title="Created Objects per month");timeseries.create.cumsum().plot(grid=True, secondary_y=True);plt.ylabel("Cumulative")
+>>> timeseries["create"].plot(grid=True, title="Created Objects per month")
+>>> timeseries["create"].cumsum().plot(grid=True, secondary_y=True)
 ```
 
 ![image.png](2.PNG)
@@ -126,7 +127,7 @@ Object Evolution (created objects)
 Delta distribution for the two major variables, create and modify
 
 ```python3
->>> timeseries[["create", "modify"]].diff().hist(bins=15);plt.suptitle("Distribution of $\delta_t$")
+>>> timeseries[["create", "modify"]].diff().hist(bins=15)
 ```
 ![image.png](3.png)
 
