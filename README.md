@@ -7,7 +7,12 @@ A package for receiving and restructuring OSM historic object time series data c
 
 ## Installation
 
-Install directly from source 
+Install via PyPi
+
+```bash
+$ pip install OSMEvolution
+```
+or directly from source 
 ```bash
 $ python -m pip install git+https://github.com/le0x99/OSMEvolution
 ```
